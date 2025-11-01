@@ -11,34 +11,37 @@ c.DockerSpawner.network_name = os.environ.get('DOCKER_NETWORK_NAME', 'jupyter-ba
 c.DockerSpawner.remove = True
 c.DockerSpawner.remove_containers = True
 
-# Per-user resource limits (production safe)
+# Per-user resource limits
 c.DockerSpawner.mem_limit = '1G'
 c.DockerSpawner.cpu_limit = 0.5
 c.DockerSpawner.cpu_guarantee = 0.25
 
-# NO persistent storage - everything is temporary
+# NO persistent storage
 c.DockerSpawner.volumes = {}
 
 # Hub configuration
 c.JupyterHub.hub_ip = '0.0.0.0'
-c.JupyterHub.hub_connect_ip = 'jupyterhub'  # Internal docker hostname
+c.JupyterHub.hub_connect_ip = 'jupyterhub'
 
-# ENABLE NAMED SERVERS for multiple concurrent sessions per user
+# ENABLE NAMED SERVERS
 c.JupyterHub.allow_named_servers = True
 
-# Authentication: DummyAuthenticator allows any password (stateless)
+# Authentication
 c.JupyterHub.authenticator_class = 'jupyterhub.auth.DummyAuthenticator'
 c.DummyAuthenticator.password = 'anything'
 
-# ✅ UPDATED: Enhanced CORS and WebSocket settings
+# ✅ FIXED: Enhanced CORS and WebSocket settings
 c.JupyterHub.tornado_settings = {
     'headers': {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, CONNECT, PATCH',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
     },
-    'ws_ping_interval': 30,  # ✅ NEW: Keep WebSocket alive
-    'ws_ping_timeout': 10,   # ✅ NEW: WebSocket timeout
+    'ws_ping_interval': 30,
+    'ws_ping_timeout': 10,
+    'allow_origin_with_credentials': True,
+    'max_buffer_size': 10_000_000,
 }
 
 # API service token for iOS app
@@ -51,7 +54,7 @@ c.JupyterHub.services = [
 ]
 
 # Auto-cleanup: stop idle servers after 30 minutes
-c.JupyterHub.inactive_servers_timeout = 1800
+c.JupyterHub.active_server_limit = 10  # ✅ FIXED: Use correct name (not inactive_servers_timeout)
 
 # Graceful shutdown
 c.JupyterHub.shutdown_on_logout = True
@@ -60,15 +63,3 @@ c.JupyterHub.shutdown_on_logout = True
 c.JupyterHub.base_url = '/'
 c.JupyterHub.ip = '0.0.0.0'
 c.JupyterHub.port = 8000
-
-# ✅ NEW: Allow remote access and WebSocket upgrades
-c.JupyterHub.allow_remote_access = True
-
-# Allow origin from anywhere (for mobile)
-c.JupyterHub.allow_origin = '*'
-
-# ✅ NEW: Token authentication - allow query parameter tokens
-c.JupyterHub.tornado_settings['allow_origin_with_credentials'] = True
-
-# ✅ NEW: Increase limits for WebSocket
-c.JupyterHub.tornado_settings['max_buffer_size'] = 10_000_000  # 10MB for large responses
