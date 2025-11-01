@@ -11,7 +11,8 @@ services:
       - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
       - jupyterhub-data:/srv/jupyterhub/data
     ports:
-      - "0.0.0.0:8000:8000"
+      - "8000:8000"
+      - "8001:8001"
     environment:
       - DOCKER_NOTEBOOK_IMAGE=jupyter-notebook-server
       - DOCKER_NETWORK_NAME=jupyter-backend_default

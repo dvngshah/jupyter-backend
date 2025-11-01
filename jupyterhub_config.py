@@ -20,8 +20,8 @@ c.DockerSpawner.cpu_guarantee = 0.25
 c.DockerSpawner.volumes = {}
 
 # Hub configuration
-c.JupyterHub.hub_ip = 'jupyterhub'
-c.JupyterHub.hub_connect_ip = 'jupyterhub'
+c.JupyterHub.hub_ip = '0.0.0.0'
+c.JupyterHub.hub_connect_ip = 'jupyterhub'  # Internal docker hostname
 
 # ENABLE NAMED SERVERS for multiple concurrent sessions per user
 c.JupyterHub.allow_named_servers = True
@@ -30,7 +30,7 @@ c.JupyterHub.allow_named_servers = True
 c.JupyterHub.authenticator_class = 'jupyterhub.auth.DummyAuthenticator'
 c.DummyAuthenticator.password = 'anything'
 
-# CORS headers for mobile app
+# CORS headers for mobile app - allow all origins
 c.JupyterHub.tornado_settings = {
     'headers': {
         'Access-Control-Allow-Origin': '*',
@@ -43,7 +43,7 @@ c.JupyterHub.tornado_settings = {
 c.JupyterHub.services = [
     {
         'name': 'ios-app',
-        'api_token': os.environ.get('JUPYTERHUB_API_TOKEN', 'your-secret-token-change-in-prod'),
+        'api_token': os.environ.get('JUPYTERHUB_API_TOKEN', '658b70e1f2e36ea2b26a31b0ca3ac61400fe945731caf162daa2b804db76f7d0'),
         'admin': True
     }
 ]
@@ -58,3 +58,6 @@ c.JupyterHub.shutdown_on_logout = True
 c.JupyterHub.base_url = '/'
 c.JupyterHub.ip = '0.0.0.0'
 c.JupyterHub.port = 8000
+
+# Allow origin from anywhere (for mobile)
+c.JupyterHub.allow_origin = '*'
