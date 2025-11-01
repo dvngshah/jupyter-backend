@@ -1,0 +1,27 @@
+FROM quay.io/jupyterhub/jupyterhub:4.0
+
+# Install required packages
+RUN pip install --no-cache-dir \
+    dockerspawner \
+    jupyterhub-nativeauthenticator
+
+# Create non-root user for security
+RUN useradd -m -s /bin/bash jupyterhub-user
+
+# Copy configuration
+COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
+
+WORKDIR /srv/jupyterhub
+
+# Create data directory with proper permissions
+RUN mkdir -p /srv/jupyterhub/data && \
+    chown -R jupyterhub-user:jupyterhub-user /srv/jupyterhub
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/hub/health || exit 1
+
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]

@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  jupyterhub:
+    build:
+      context: .
+      dockerfile: Dockerfile.hub
+    container_name: jupyterhub
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
+      - jupyterhub-data:/srv/jupyterhub/data
+    ports:
+      - "0.0.0.0:8000:8000"
+    environment:
+      - DOCKER_NOTEBOOK_IMAGE=jupyter-notebook-server
+      - DOCKER_NETWORK_NAME=jupyter-backend_default
+      - JUPYTERHUB_API_TOKEN=658b70e1f2e36ea2b26a31b0ca3ac61400fe945731caf162daa2b804db76f7d0
+    networks:
+      - default
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+networks:
+  default:
+    name: jupyter-backend_default
+
+volumes:
+  jupyterhub-data:
