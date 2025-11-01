@@ -1,11 +1,21 @@
 version: '3'
 
 services:
+  # Build the notebook image
+  jupyter-notebook:
+    build:
+      context: .
+      dockerfile: Dockerfile.notebook
+    image: jupyter-notebook-server
+    # Don't run this as a service, it's just for building
+
   jupyterhub:
     build:
       context: .
       dockerfile: Dockerfile.hub
     container_name: jupyterhub
+    depends_on:
+      - jupyter-notebook
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py

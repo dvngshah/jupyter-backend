@@ -30,13 +30,15 @@ c.JupyterHub.allow_named_servers = True
 c.JupyterHub.authenticator_class = 'jupyterhub.auth.DummyAuthenticator'
 c.DummyAuthenticator.password = 'anything'
 
-# CORS headers for mobile app - allow all origins
+# ✅ UPDATED: Enhanced CORS and WebSocket settings
 c.JupyterHub.tornado_settings = {
     'headers': {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    }
+    },
+    'ws_ping_interval': 30,  # ✅ NEW: Keep WebSocket alive
+    'ws_ping_timeout': 10,   # ✅ NEW: WebSocket timeout
 }
 
 # API service token for iOS app
@@ -59,5 +61,14 @@ c.JupyterHub.base_url = '/'
 c.JupyterHub.ip = '0.0.0.0'
 c.JupyterHub.port = 8000
 
+# ✅ NEW: Allow remote access and WebSocket upgrades
+c.JupyterHub.allow_remote_access = True
+
 # Allow origin from anywhere (for mobile)
 c.JupyterHub.allow_origin = '*'
+
+# ✅ NEW: Token authentication - allow query parameter tokens
+c.JupyterHub.tornado_settings['allow_origin_with_credentials'] = True
+
+# ✅ NEW: Increase limits for WebSocket
+c.JupyterHub.tornado_settings['max_buffer_size'] = 10_000_000  # 10MB for large responses

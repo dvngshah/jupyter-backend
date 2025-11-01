@@ -3,7 +3,8 @@ FROM quay.io/jupyterhub/jupyterhub:4.0
 # Install required packages
 RUN pip install --no-cache-dir \
     dockerspawner \
-    jupyterhub-nativeauthenticator
+    jupyterhub-nativeauthenticator \
+    jupyterhub-idle-culler
 
 # Create non-root user for security
 RUN useradd -m -s /bin/bash jupyterhub-user
