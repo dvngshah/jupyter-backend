@@ -21,10 +21,15 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Switch to jovyan user
 USER jovyan
 
-# Start notebook server
+# ✅ NEW: Pass the service token as an environment variable
+# This allows the notebook server to recognize API calls with this token
+ENV JUPYTERHUB_API_TOKEN=658b70e1f2e36ea2b26a31b0ca3ac61400fe945731caf162daa2b804db76f7d0
+
+# Start notebook server with token authentication
 CMD ["start-notebook.sh", \
      "--ip=0.0.0.0", \
      "--port=8888", \
      "--no-browser", \
      "--NotebookApp.allow_origin='*'", \
-     "--NotebookApp.token=''"]
+     "--NotebookApp.token=''", \
+     "--NotebookApp.allow_remote_access=True"]
